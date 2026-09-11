@@ -1,0 +1,50 @@
+package jwt
+
+import (
+	"errors"
+)
+
+// The list of jwt token errors presented to the end user.
+var (
+	ErrTokenUnauthorized   = errors.New("token unauthorized")
+	ErrTokenExpired        = errors.New("token expired")
+	ErrInvalidAccessToken  = errors.New("invalid access token")
+	ErrInvalidRefreshToken = errors.New("invalid refresh token")
+	ErrWeakSecret          = errors.New("JWT secret uses a known default value — set AUTH_JWT_SECRET: openssl rand -base64 64")
+	ErrSecretTooShort      = errors.New("JWT secret is too short — must be at least 32 characters")
+)
+
+// ErrResponse is the error response type returned to the client. It implements
+// error so handlers and middleware can return it directly to echo, where the
+// application error handler renders it as JSON with its status code.
+type ErrResponse struct {
+	Err            error `json:"-"` // low-level runtime error
+	HTTPStatusCode int   `json:"-"` // http response status code
+
+	StatusText string `json:"status"`          // user-level status message
+	AppCode    int64  `json:"code,omitempty"`  // application-specific error code
+	ErrorText  string `json:"error,omitempty"` // application-level error message, for debugging
+}
+
+// Error implements the error interface.
+func (e *ErrResponse) Error() string {
+	if e.ErrorText != "" {
+		return e.ErrorText
+	}
+	return e.StatusText
+}
+
+// Status returns the http response status code of the error response.
+func (e *ErrResponse) Status() int {
+	return e.HTTPStatusCode
+}
+
+// ErrUnauthorized renders status 401 Unauthorized with custom error message.
+func ErrUnauthorized(err error) error {
+	return &ErrResponse{
+		Err:            err,
+		HTTPStatusCode: 401,
+		StatusText:     "Unauthorized",
+		ErrorText:      err.Error(),
+	}
+}

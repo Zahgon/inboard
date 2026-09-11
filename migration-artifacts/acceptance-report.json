@@ -1,0 +1,97 @@
+{
+  "checks": {
+    "migrated_repo": {
+      "name": "Migrated repo present",
+      "pass": true,
+      "detail": "/Users/macbookpro/Desktop/FrameWork_Migration/go-base  |  42 Go files, dominant, manifests: go.mod, go.sum",
+      "target_language": "Go",
+      "dominant_language": "Go",
+      "target_source_files": 42,
+      "manifests": [
+        "go.mod",
+        "go.sum"
+      ],
+      "language_bytes": {
+        "Go": 91907,
+        "Python": 5473
+      }
+    },
+    "golden_diff": {
+      "name": "Golden diff present",
+      "pass": true,
+      "detail": "golden_patch  |  23 files, +756/-867, 68 hunks, 85,705 bytes",
+      "path": "/Users/macbookpro/Desktop/FrameWork_Migration/go-base-migration-artifacts/golden_patch",
+      "bytes": 85705,
+      "files_changed": 23,
+      "files": [
+        "README.md",
+        "api/admin/accounts.go",
+        "api/admin/api.go",
+        "api/admin/errors.go",
+        "api/api.go",
+        "api/app/account.go",
+        "api/app/api.go",
+        "api/app/errors.go",
+        "api/app/profile.go",
+        "api/server.go",
+        "auth/authorize/errors.go",
+        "auth/authorize/roles.go",
+        "auth/jwt/authenticator.go",
+        "auth/jwt/errors.go",
+        "auth/jwt/tokenauth.go",
+        "auth/pwdless/api.go",
+        "auth/pwdless/errors.go",
+        "cmd/gendoc.go",
+        "go.mod",
+        "go.sum",
+        "logging/logger.go",
+        "render/render.go",
+        "routes.md"
+      ],
+      "insertions": 756,
+      "deletions": 867,
+      "hunks": 68,
+      "looks_like_diff": true,
+      "noise_files": []
+    },
+    "truth_md": {
+      "name": "truth.md present",
+      "pass": true,
+      "detail": "truth.md  |  9/9 sections, 7/7 validation rows, 23,066 bytes",
+      "path": "/Users/macbookpro/Desktop/FrameWork_Migration/go-base-migration-artifacts/truth.md",
+      "bytes": 23066,
+      "sections_present": [
+        "Repository",
+        "Original State",
+        "Migration Process",
+        "Files Changed",
+        "Mapping",
+        "Verification",
+        "Final Validation",
+        "Golden Patch",
+        "Known Limitations"
+      ],
+      "sections_missing": [],
+      "validation_rows_found": [
+        "build",
+        "test",
+        "startup",
+        "functional",
+        "source",
+        "target",
+        "complete"
+      ],
+      "validation_rows_missing": [],
+      "placeholders": [],
+      "declared_fails": [],
+      "has_commands": true
+    },
+    "tests_differ": {
+      "name": "Test cases differ from the old ones",
+      "pass": false,
+      "detail": "need both the original and migrated repos to compare suites"
+    }
+  },
+  "passed": false,
+  "pending": []
+}

@@ -1,0 +1,562 @@
+<title>chi → echo Parity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --ground:      #F6F8F9;
+    --surface:     #FFFFFF;
+    --surface-alt: #EFF3F4;
+    --ink:         #0F1719;
+    --ink-soft:    #4C5F65;
+    --ink-faint:   #7B8E94;
+    --rule:        #DCE4E6;
+    --rule-strong: #C2CFD2;
+    --accent:      #0B7A8C;
+    --accent-soft: #E2F0F3;
+    --pass:        #157F52;
+    --pass-soft:   #E1F0E8;
+    --partial:     #8A6300;
+    --partial-soft:#F6EDD8;
+    --shadow:      0 1px 2px rgba(15,23,25,.05), 0 8px 24px -16px rgba(15,23,25,.18);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #0B1113;
+      --surface:     #121A1D;
+      --surface-alt: #182225;
+      --ink:         #E7EEF0;
+      --ink-soft:    #9DB0B6;
+      --ink-faint:   #75898F;
+      --rule:        #223034;
+      --rule-strong: #33454A;
+      --accent:      #4FC9DC;
+      --accent-soft: #10333A;
+      --pass:        #46C68A;
+      --pass-soft:   #102E22;
+      --partial:     #E0AC4C;
+      --partial-soft:#31260F;
+      --shadow:      0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:      #0B1113;
+    --surface:     #121A1D;
+    --surface-alt: #182225;
+    --ink:         #E7EEF0;
+    --ink-soft:    #9DB0B6;
+    --ink-faint:   #75898F;
+    --rule:        #223034;
+    --rule-strong: #33454A;
+    --accent:      #4FC9DC;
+    --accent-soft: #10333A;
+    --pass:        #46C68A;
+    --pass-soft:   #102E22;
+    --partial:     #E0AC4C;
+    --partial-soft:#31260F;
+    --shadow:      0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2.5rem) 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.75rem;
+  }
+
+  /* ---------- masthead ---------- */
+  .masthead { display: flex; flex-direction: column; gap: .9rem; }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .7rem;
+    font-weight: 500;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  h1 {
+    font-family: Archivo, ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.9rem, 4.4vw, 2.7rem);
+    line-height: 1.08;
+    letter-spacing: -.022em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .subject {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .82rem;
+    color: var(--ink-soft);
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem 1.1rem;
+  }
+  .subject b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- stat tiles ---------- */
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(178px, 1fr));
+    gap: .75rem;
+  }
+
+  .tile {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 1rem 1.05rem 1.05rem;
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    box-shadow: var(--shadow);
+    border-top: 2px solid var(--rule-strong);
+  }
+  .tile.is-pass { border-top-color: var(--pass); }
+  .tile.is-partial { border-top-color: var(--partial); }
+
+  .tile-label {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .66rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .tile-value {
+    font-family: Archivo, ui-sans-serif, sans-serif;
+    font-weight: 600;
+    font-size: 1.75rem;
+    line-height: 1.05;
+    letter-spacing: -.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .tile-note { font-size: .78rem; color: var(--ink-soft); }
+
+  /* ---------- sections ---------- */
+  section { display: flex; flex-direction: column; gap: .85rem; }
+
+  h2 {
+    font-family: Archivo, ui-sans-serif, sans-serif;
+    font-weight: 600;
+    font-size: 1.02rem;
+    letter-spacing: .01em;
+    margin: 0;
+    padding-bottom: .5rem;
+    border-bottom: 1px solid var(--rule-strong);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  h2 .count {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .74rem;
+    font-weight: 500;
+    color: var(--ink-faint);
+    letter-spacing: .04em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  p { margin: 0; max-width: 68ch; color: var(--ink-soft); font-size: .875rem; }
+  p strong { color: var(--ink); font-weight: 600; }
+
+  /* ---------- tables ---------- */
+  .scroll { overflow-x: auto; border: 1px solid var(--rule); border-radius: 3px; background: var(--surface); }
+
+  table { width: 100%; border-collapse: collapse; font-size: .845rem; }
+
+  th {
+    text-align: left;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 500;
+    font-size: .66rem;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    padding: .65rem .85rem;
+    background: var(--surface-alt);
+    border-bottom: 1px solid var(--rule-strong);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: .6rem .85rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+
+  td.mono, .mono {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .795rem;
+    font-variant-numeric: tabular-nums;
+  }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.center { text-align: center; }
+  .dim { color: var(--ink-faint); }
+
+  /* ---------- pills ---------- */
+  .pill {
+    display: inline-block;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .66rem;
+    font-weight: 600;
+    letter-spacing: .07em;
+    padding: .13rem .44rem;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .p-pass    { background: var(--pass-soft);    color: var(--pass); }
+  .p-partial { background: var(--partial-soft); color: var(--partial); }
+  .p-same    { background: var(--accent-soft);  color: var(--accent); }
+
+  /* ---------- bar ---------- */
+  .bar {
+    position: relative;
+    height: 6px;
+    min-width: 88px;
+    background: var(--surface-alt);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .bar span { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 1px; }
+  .bar.is-partial span { background: var(--partial); }
+
+  /* ---------- callout ---------- */
+  .note {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 2px solid var(--accent);
+    border-radius: 3px;
+    padding: .9rem 1.05rem;
+    display: flex;
+    flex-direction: column;
+    gap: .45rem;
+  }
+  .note h3 {
+    margin: 0;
+    font-family: Archivo, ui-sans-serif, sans-serif;
+    font-size: .82rem;
+    font-weight: 600;
+    letter-spacing: .01em;
+  }
+  .note p { font-size: .845rem; }
+
+  ul { margin: 0; padding-left: 1.1rem; color: var(--ink-soft); font-size: .845rem; max-width: 68ch; }
+  li { margin-bottom: .3rem; }
+  li::marker { color: var(--ink-faint); }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 1rem;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .7rem;
+    color: var(--ink-faint);
+    line-height: 1.7;
+  }
+
+  a { color: var(--accent); }
+  a:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Migration verification · Original Harness</div>
+    <h1>chi → echo parity report</h1>
+    <div class="subject">
+      <span><b>dhax/go-base</b> @ <b>56903f8</b></span>
+      <span>f_s <b>chi v5.2.4</b> → f_t <b>echo v4.12.0</b></span>
+      <span>layer <b>whole_applications</b></span>
+      <span>Go <b>1.25.0</b></span>
+    </div>
+  </header>
+
+  <div class="tiles">
+    <div class="tile is-pass">
+      <div class="tile-label">Go unit tests</div>
+      <div class="tile-value">16 / 16</div>
+      <div class="tile-note">Pass on both source and target</div>
+    </div>
+    <div class="tile is-pass">
+      <div class="tile-label">Behavioural oracle</div>
+      <div class="tile-value">17 / 17</div>
+      <div class="tile-note">Pass on both source and target</div>
+    </div>
+    <div class="tile is-partial">
+      <div class="tile-label">Response similarity</div>
+      <div class="tile-value">47 / 57</div>
+      <div class="tile-note">82.5% byte-identical · 10 differ</div>
+    </div>
+    <div class="tile is-pass">
+      <div class="tile-label">Gates C / D / O</div>
+      <div class="tile-value">1 · 1 · 1.0</div>
+      <div class="tile-note">Compile · deploy · oracle</div>
+    </div>
+  </div>
+
+  <section>
+    <h2>Suite results <span class="count">source vs target</span></h2>
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Suite</th>
+            <th>What it measures</th>
+            <th>Source (chi)</th>
+            <th>Target (echo)</th>
+            <th class="num">Pass</th>
+            <th class="num">Fail</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">go test</td>
+            <td>Repository's own unit tests, mocked store</td>
+            <td><span class="pill p-pass">PASS</span></td>
+            <td><span class="pill p-pass">PASS</span></td>
+            <td class="num">16</td>
+            <td class="num">0</td>
+          </tr>
+          <tr>
+            <td class="mono">go test -race</td>
+            <td>Data races across the new <span class="mono">c.Set</span>/<span class="mono">c.Get</span> state</td>
+            <td class="dim">not run</td>
+            <td><span class="pill p-pass">CLEAN</span></td>
+            <td class="num">—</td>
+            <td class="num">0</td>
+          </tr>
+          <tr>
+            <td class="mono">go vet</td>
+            <td>Static correctness</td>
+            <td><span class="pill p-pass">CLEAN</span></td>
+            <td><span class="pill p-pass">CLEAN</span></td>
+            <td class="num">—</td>
+            <td class="num">0</td>
+          </tr>
+          <tr>
+            <td class="mono">smoke.py</td>
+            <td>Framework-neutral HTTP oracle</td>
+            <td><span class="pill p-pass">PASS</span></td>
+            <td><span class="pill p-pass">PASS</span></td>
+            <td class="num">17</td>
+            <td class="num">0</td>
+          </tr>
+          <tr>
+            <td class="mono">deploy</td>
+            <td>Container reaches <span class="mono">Listening on :3000</span></td>
+            <td><span class="pill p-pass">PASS</span></td>
+            <td><span class="pill p-pass">PASS</span></td>
+            <td class="num">1</td>
+            <td class="num">0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The oracle passing <strong>identically on both implementations</strong> is what makes it valid — a test suite that only passes on the target proves nothing about behaviour preservation.</p>
+  </section>
+
+  <section>
+    <h2>Behavioural oracle — per test <span class="count">17 cases · 17 pass · 0 fail</span></h2>
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Test case</th>
+            <th>Asserted boundary</th>
+            <th class="center">chi</th>
+            <th class="center">echo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">healthz_returns_ok</td><td>200 · body exactly <span class="mono">ok</span></td><td class="center"><span class="pill p-pass">PASS</span></td><td class="center"><span class="pill p-pass">PASS</span></td></tr>
+          <tr><td class="mono">root_serves_the_spa</td><td>200 · SPA index served at <span class="mono">/</span></td><td class="center"><span class="pill p-pass">PASS</span></td><td class="center"><span class="pill p-pass">PASS</span></td></tr>
+          <tr><td class="mono">unknown_path_falls_back_to_the_spa</td><td>200 not 404 · body equals <span class="mono">/</span></td><td class="center"><span class="pill p-pass">PASS</span></td><td class="center"><span class="pill p-pass">PASS</span></td></tr>
+          <tr><td class="mono">protected_route_without_token…</td><td>401 · <span class="mono">token unauthorized</span></td><td class="center"><span class="pill p-pass">PASS</span></td><td class="center"><span class="pill p-pass">PASS</span></td></tr>
+          <tr><td class="mono">protected_route_with_foreign_signature…</td><td>401 for a token signed with another key</td><td class="center"><span class="pill p-pass">PASS</span></td><td class="center"><span class="pill p-pass">PASS</span></td></tr>
+          <tr><td class="mono">login_with_registered_email…</td><td>200 · body exactly <span class="mono">{}</span></td><td class="center"><span class="pill p-pass">PASS</span></td><td class="center"><span class="pill p-pass">PASS</span></td></tr>
+          <tr><td class="mono">login_with_unregistered_email…</td><td>401 · <span class="mono">email not registered</span></td><td class="center"><span class="pill p-pass">PASS</span></td><td class="center"><span class="pill p-pass">PASS</span></td></tr>
+          <tr><td class="mono">login_with_malformed_email…</td><td>401 · <span class="mono">invalid email address</span></td><td class="center"><span class="pill p-pass">PASS</span></td><td class="center"><span class="pill p-pass">PASS</span></td></tr>
+          <tr><td class="mono">account_returns_the_authenticated_account</td><td>200 · id/email/name/active/roles</td><td class="center"><span class="pill p-pass">PASS</span></td><td class="center"><span class="pill p-pass">PASS</span></td></tr>
+          <tr><td class="mono">profile_returns_the_default_theme</td><td>200 · <span class="mono">theme = default</span></td><td class="center"><span class="pill p-pass">PASS</span></td><td class="center"><span class="pill p-pass">PASS</span></td></tr>
+          <tr><td class="mono">admin_lists_all_accounts</td><td>200 · <span class="mono">count = 2</span> · both seeded emails</td><td class="center"><span class="pill p-pass">PASS</span></td><td class="center"><span class="pill p-pass">PASS</span></td></tr>
+          <tr><td class="mono">admin_index_greets</td><td>200 · body exactly <span class="mono">Hello Admin</span></td><td class="center"><span class="pill p-pass">PASS</span></td><td class="center"><span class="pill p-pass">PASS</span></td></tr>
+          <tr><td class="mono">non_admin_is_forbidden_from_admin_routes</td><td>403 for a <span class="mono">roles:["user"]</span> token</td><td class="center"><span class="pill p-pass">PASS</span></td><td class="center"><span class="pill p-pass">PASS</span></td></tr>
+          <tr><td class="mono">trailing_slash[/api/account]</td><td>200 routable</td><td class="center"><span class="pill p-pass">PASS</span></td><td class="center"><span class="pill p-pass">PASS</span></td></tr>
+          <tr><td class="mono">trailing_slash[/api/account/]</td><td>200 routable</td><td class="center"><span class="pill p-pass">PASS</span></td><td class="center"><span class="pill p-pass">PASS</span></td></tr>
+          <tr><td class="mono">trailing_slash[/api/profile]</td><td>200 routable</td><td class="center"><span class="pill p-pass">PASS</span></td><td class="center"><span class="pill p-pass">PASS</span></td></tr>
+          <tr><td class="mono">trailing_slash[/api/profile/]</td><td>200 routable</td><td class="center"><span class="pill p-pass">PASS</span></td><td class="center"><span class="pill p-pass">PASS</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Go unit tests — per test <span class="count">4 functions · 16 subtests · 16 pass · 0 fail</span></h2>
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Test function</th>
+            <th>Subtests</th>
+            <th class="num">n</th>
+            <th class="center">chi</th>
+            <th class="center">echo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">TestAuthResource_login</td><td class="mono dim">missing · inexistent · disabled · valid</td><td class="num">4</td><td class="center"><span class="pill p-pass">4/4</span></td><td class="center"><span class="pill p-pass">4/4</span></td></tr>
+          <tr><td class="mono">TestAuthResource_token</td><td class="mono dim">invalid · expired · deleted_account · disabled · valid</td><td class="num">5</td><td class="center"><span class="pill p-pass">5/5</span></td><td class="center"><span class="pill p-pass">5/5</span></td></tr>
+          <tr><td class="mono">TestAuthResource_refresh</td><td class="mono dim">not_found · expired · disabled · valid</td><td class="num">4</td><td class="center"><span class="pill p-pass">4/4</span></td><td class="center"><span class="pill p-pass">4/4</span></td></tr>
+          <tr><td class="mono">TestAuthResource_logout</td><td class="mono dim">notfound · expired · valid</td><td class="num">3</td><td class="center"><span class="pill p-pass">3/3</span></td><td class="center"><span class="pill p-pass">3/3</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Only framework plumbing changed in the test file — <span class="mono">chi.NewRouter()</span> → <span class="mono">echo.New()</span>. Every case, input and assertion is byte-for-byte the original. <strong>No test was weakened, skipped or removed.</strong></p>
+  </section>
+
+  <section>
+    <h2>Output similarity <span class="count">57 request/response pairs compared side by side</span></h2>
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Differential suite</th>
+            <th class="num">Identical</th>
+            <th class="num">Differ</th>
+            <th class="num">%</th>
+            <th style="width:34%">Similarity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Write paths <span class="dim">— mutations, validation, filters</span></td>
+            <td class="num">20</td><td class="num">1</td><td class="num">95.2</td>
+            <td><div class="bar"><span style="width:95.2%"></span></div></td>
+          </tr>
+          <tr>
+            <td>Read paths <span class="dim">— core boundary, auth, admin</span></td>
+            <td class="num">18</td><td class="num">2</td><td class="num">90.0</td>
+            <td><div class="bar"><span style="width:90%"></span></div></td>
+          </tr>
+          <tr>
+            <td>Edge cases <span class="dim">— unmatched methods, HEAD, static</span></td>
+            <td class="num">7</td><td class="num">2</td><td class="num">77.8</td>
+            <td><div class="bar"><span style="width:77.8%"></span></div></td>
+          </tr>
+          <tr>
+            <td>CORS <span class="dim">— preflight + simple requests</span></td>
+            <td class="num">2</td><td class="num">5</td><td class="num">28.6</td>
+            <td><div class="bar is-partial"><span style="width:28.6%"></span></div></td>
+          </tr>
+          <tr style="border-top:1px solid var(--rule-strong)">
+            <td><b>Total</b></td>
+            <td class="num"><b>47</b></td><td class="num"><b>10</b></td><td class="num"><b>82.5</b></td>
+            <td><div class="bar"><span style="width:82.5%"></span></div></td>
+          </tr>
+          <tr>
+            <td class="dim">Total excluding CORS preflight</td>
+            <td class="num">45</td><td class="num">5</td><td class="num">90.0</td>
+            <td><div class="bar"><span style="width:90%"></span></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Compared on status code, <span class="mono">Content-Type</span> and normalised body, with timestamps and token strings masked. Both stacks ran from identical fresh seed data.</p>
+  </section>
+
+  <section>
+    <h2>The 10 differences <span class="count">4 root causes · 0 application-logic defects</span></h2>
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Root cause</th>
+            <th class="num">n</th>
+            <th>chi</th>
+            <th>echo</th>
+            <th class="center">Status match</th>
+            <th>Client impact</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CORS preflight shape</td>
+            <td class="num">5</td>
+            <td class="mono">200 · echoes requested method</td>
+            <td class="mono">204 · returns full allow-list</td>
+            <td class="center"><span class="pill p-partial">NO</span></td>
+            <td>None — browser decision identical in all cases</td>
+          </tr>
+          <tr>
+            <td><span class="mono">Content-Type</span> charset case</td>
+            <td class="num">2</td>
+            <td class="mono">charset=utf-8</td>
+            <td class="mono">charset=UTF-8</td>
+            <td class="center"><span class="pill p-same">YES</span></td>
+            <td>None — case-insensitive per RFC 7231</td>
+          </tr>
+          <tr>
+            <td>Framework error body</td>
+            <td class="num">2</td>
+            <td class="mono">empty body</td>
+            <td class="mono">{"status":"…"}</td>
+            <td class="center"><span class="pill p-same">YES</span></td>
+            <td>Cosmetic — 405 and a shared pre-existing panic</td>
+          </tr>
+          <tr>
+            <td>Automatic <span class="mono">OPTIONS</span> handling</td>
+            <td class="num">1</td>
+            <td class="mono">405</td>
+            <td class="mono">204 + Allow</td>
+            <td class="center"><span class="pill p-partial">NO</span></td>
+            <td>echo is the more spec-conformant of the two</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Every application-generated response — 200, 401, 403, 404, 422 — is byte-identical.</strong> All 10 differences sit in responses the framework itself generates, never in application logic.</p>
+  </section>
+
+  <section>
+    <h2>Not covered</h2>
+    <div class="note">
+      <h3>Read before scoring candidates with this oracle</h3>
+      <p>The oracle exercises write paths for routing and authorization only, not mutation semantics — a candidate could pass all 17 tests with a broken <span class="mono">update</span> handler. Write paths were verified for <em>this</em> migration by the separate differential run above, but that is not part of the scored oracle.</p>
+    </div>
+    <ul>
+      <li><span class="mono">/auth/refresh</span> and <span class="mono">/auth/logout</span> — refresh claim is a database-stored UUID a minted token cannot satisfy; covered by the Go unit tests instead.</li>
+      <li>TLS, the <span class="mono">jwt</span> cookie token source, and SMTP beyond the stdout fallback — untested, not assumed working.</li>
+      <li><span class="mono">Content-Type</span> is deliberately not asserted in the oracle; doing so would fail a correct migration on charset case alone.</li>
+    </ul>
+  </section>
+
+  <footer>
+    All figures produced in a single post-fix verification run · Go commands in golang:1.25 · both stacks under Docker Compose with Postgres 17<br>
+    Evidence and commands: truth.md §6 · test.md §6 · golden.patch · test.patch
+  </footer>
+
+</div>
